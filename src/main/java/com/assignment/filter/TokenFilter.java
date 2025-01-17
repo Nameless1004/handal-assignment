@@ -1,12 +1,17 @@
 package com.assignment.filter;
 
 import com.assignment.components.TokenUtils;
+import com.assignment.security.AuthUser;
+import com.assignment.security.JwtAuthenticationToken;
+import io.jsonwebtoken.lang.Strings;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -22,7 +27,34 @@ public class TokenFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
         String method = request.getMethod();
-        log.info("[{}] {}", method, uri);
+
+        log.info(":::Request URI::: [ {}:{} ]", method, uri);
+
+        String headerToken = request.getHeader("Authorization");
+
+        // 토큰이 없거나 "Bearer "로 시작하지 않는다면 필터 건너뜀
+        if(!Strings.hasText(headerToken) || headerToken.startsWith("Bearer ")) {
+
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not found");
+            return;
+        }
+
+        // prefix 제거
+        String token = headerToken.substring(7);
+
+        String id = tokenUtils.getId(token);
+        String username = tokenUtils.getUsername(token);
+        String role = tokenUtils.getRole(token);
+        String nickname = tokenUtils.getNickname(token);
+
+        // 인증 객체 생성
+        if(Strings.hasText(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            AuthUser authUser = new AuthUser(id, username, nickname, role);
+            JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(authUser);
+            jwtAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(jwtAuthenticationToken);
+        }
+
         filterChain.doFilter(request, response);
     }
 }

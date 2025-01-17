@@ -40,6 +40,10 @@ public class TokenUtils {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
+    public String getNickname(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
+    }
+
     public String getType(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("type", String.class);
     }
@@ -81,4 +85,5 @@ public class TokenUtils {
         Claims claims = getClaimsFromToken(token);
         return claims.getExpiration().before(new java.util.Date());
     }
+
 }
