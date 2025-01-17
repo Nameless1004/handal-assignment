@@ -3,6 +3,7 @@ package com.assignment.filter;
 import com.assignment.components.TokenUtils;
 import com.assignment.security.AuthUser;
 import com.assignment.security.JwtAuthenticationToken;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.lang.Strings;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,14 +34,20 @@ public class TokenFilter extends OncePerRequestFilter {
         String headerToken = request.getHeader("Authorization");
 
         // 토큰이 없거나 "Bearer "로 시작하지 않는다면 필터 건너뜀
-        if(!Strings.hasText(headerToken) || headerToken.startsWith("Bearer ")) {
+        if(!Strings.hasText(headerToken) || !headerToken.startsWith("Bearer ")) {
 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not found");
             return;
         }
 
+
         // prefix 제거
         String token = headerToken.substring(7);
+
+        if(!tokenUtils.validateToken(token)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token invalid");
+            return;
+        }
 
         String id = tokenUtils.getId(token);
         String username = tokenUtils.getUsername(token);

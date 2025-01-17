@@ -18,13 +18,9 @@ import java.util.Date;
 @Component
 public class TokenUtils {
 
-    @Value("${jwt.secret.key}")
-    private String JWT_SECRET_KEY;
+    private final SecretKey secretKey;
 
-    private SecretKey secretKey;
-
-    @PostConstruct
-    public void init() {
+    public TokenUtils(@Value("${jwt.secret.key}") String JWT_SECRET_KEY) {
         secretKey = new SecretKeySpec(JWT_SECRET_KEY.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
