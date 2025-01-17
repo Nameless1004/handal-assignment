@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 public sealed interface AuthResponseDto permits AuthResponseDto.Signup, AuthResponseDto.Signin {
+    @Schema(description = "회원가입 응답 DTO")
     record Signup(
             @Schema(description = "유저네임 입니다.", example = "jaeho")
             String username,
@@ -20,7 +21,7 @@ public sealed interface AuthResponseDto permits AuthResponseDto.Signup, AuthResp
             this(user.getUsername(), user.getNickname(), List.of(new SimpleGrantedAuthority(user.getRole())));
         }
     }
-
+    @Schema(description = "로그인 응답 DTO")
     record Signin(
             @Schema(description = "액세스 토큰입니다.", example = "eyJhbGciOiJIUzI1NiJ9")
             String accessToken,
