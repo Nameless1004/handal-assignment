@@ -25,19 +25,23 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "회원가입", description = "회원가입 API 입니다.")
+    @Operation(summary = "회원가입",
+            description = "회원가입 API 입니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = AuthRequestDto.Signup.class))))
     @PostMapping("/signup")
     @ApiResponse(responseCode = "201", description = "성공", content = {
             @Content(schema = @Schema(implementation = AuthResponseDto.Signup.class))})
-    public ResponseEntity<AuthResponseDto.Signup> signup(@Valid @RequestBody AuthRequestDto.Signup request){
+    public ResponseEntity<AuthResponseDto.Signup> signup(@Valid @RequestBody AuthRequestDto.Signup request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signup(request));
     }
 
-    @Operation(summary = "로그인", description = "로그인 API 입니다.")
+    @Operation(summary = "로그인",
+            description = "로그인 API 입니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(schema = @Schema(implementation = AuthRequestDto.Signin.class))))
     @PostMapping("/signin")
     @ApiResponse(responseCode = "201", description = "성공", content = {
             @Content(schema = @Schema(implementation = AuthResponseDto.Signin.class))})
-    public ResponseEntity<AuthResponseDto.Signin> signin(@Valid @RequestBody AuthRequestDto.Signin request){
+    public ResponseEntity<AuthResponseDto.Signin> signin(@Valid @RequestBody AuthRequestDto.Signin request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signin(request));
     }
 }
