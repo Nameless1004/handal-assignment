@@ -1,23 +1,20 @@
 package com.assignment.controller;
 
-import com.assignment.config.WebSecurityConfig;
-import com.assignment.dto.AuthRequestDto;
-import com.assignment.dto.AuthResponseDto;
-import com.assignment.filter.TokenFilter;
-import com.assignment.service.AuthService;
+import com.assignment.domain.security.config.WebSecurityConfig;
+import com.assignment.domain.auth.controller.AuthController;
+import com.assignment.domain.auth.dto.AuthRequestDto;
+import com.assignment.domain.auth.dto.AuthResponseDto;
+import com.assignment.domain.security.filter.TokenFilter;
+import com.assignment.domain.auth.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.antlr.v4.runtime.Token;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 

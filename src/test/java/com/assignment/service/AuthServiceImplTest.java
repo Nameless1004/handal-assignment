@@ -1,12 +1,13 @@
 package com.assignment.service;
 
-import com.assignment.components.TokenUtils;
-import com.assignment.dto.AuthRequestDto;
-import com.assignment.dto.AuthResponseDto;
-import com.assignment.entity.User;
-import com.assignment.exceptions.DuplicatedException;
-import com.assignment.exceptions.WrongPasswordException;
-import com.assignment.repository.UserRepository;
+import com.assignment.domain.security.TokenUtils;
+import com.assignment.domain.auth.dto.AuthRequestDto;
+import com.assignment.domain.auth.dto.AuthResponseDto;
+import com.assignment.domain.auth.service.AuthServiceImpl;
+import com.assignment.domain.user.entity.User;
+import com.assignment.common.exceptions.DuplicatedException;
+import com.assignment.common.exceptions.WrongPasswordException;
+import com.assignment.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
