@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 on:
   push:
     branches:
@@ -14,6 +14,8 @@ jobs:
           java-version: '17'
       - name: gradlew 권한부여
         run: chmod +x gradlew
+      - name: 환경변수 파일 생성
+        run: echo "${{secrets.ENVS}}" > .env
       - name: Gradle 빌드
         run: ./gradlew clean build
       - name: 도커 빌드 & 푸쉬
@@ -30,9 +32,10 @@ jobs:
           port: 22
           script: |
             mkdir -p ./config
+            echo "${{secrets.ENVS}}" > ./config/.env
             docker ps 
             docker container stop app
             docker container rm app
             docker pull ${{ secrets.DOCKER_USERNAME }}/handal
-            docker run -d -p 8080:8080 -e TZ=Asia/Seoul --name app ${{ secrets.DOCKER_USERNAME }}/handal
+            docker run -d -p 8080:8080 --env-file ~/config/.env -e TZ=Asia/Seoul --name app ${{ secrets.DOCKER_USERNAME }}/handal
             docker image prune -f
