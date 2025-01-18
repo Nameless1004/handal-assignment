@@ -18,7 +18,7 @@ public sealed interface AuthResponseDto permits AuthResponseDto.Signup, AuthResp
             @Schema(description = "권한 목록입니다.", example = "{\"authority\": \"ROLE_USER\"}")
             Collection<? extends GrantedAuthority> authorities) implements AuthResponseDto {
         public Signup(User user) {
-            this(user.getUsername(), user.getNickname(), List.of(new SimpleGrantedAuthority(user.getRole())));
+            this(user.getUsername(), user.getNickname(), List.of(new SimpleGrantedAuthority(user.getRole().name())));
         }
     }
     @Schema(description = "로그인 응답 DTO")

@@ -1,5 +1,6 @@
 package com.assignment.service;
 
+import com.assignment.common.enums.ErrorMessage;
 import com.assignment.domain.security.TokenUtils;
 import com.assignment.domain.auth.dto.AuthRequestDto;
 import com.assignment.domain.auth.dto.AuthResponseDto;
@@ -7,6 +8,7 @@ import com.assignment.domain.auth.service.AuthServiceImpl;
 import com.assignment.domain.user.entity.User;
 import com.assignment.common.exceptions.DuplicatedException;
 import com.assignment.common.exceptions.WrongPasswordException;
+import com.assignment.domain.user.enums.UserRole;
 import com.assignment.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,7 @@ class AuthServiceImplTest {
     void setUp() {
         signupRequestDto = new AuthRequestDto.Signup("username", "password", "nickname");
         signinRequestDto = new AuthRequestDto.Signin("username", "password");
-        user = new User("username", "encodedPassword", "nickname", "ROLE_USER");
+        user = new User("username", "encodedPassword", "nickname", UserRole.ROLE_USER);
         ReflectionTestUtils.setField(user, "id", 1L);
     }
 
@@ -74,7 +76,7 @@ class AuthServiceImplTest {
         // when & then
         assertThatThrownBy(() -> authService.signup(signupRequestDto))
                 .isInstanceOf(DuplicatedException.class)
-                .hasMessage("Username is already in use");
+                .hasMessage(ErrorMessage.USERNAME_DUPLICATED_MESSAGE.get());
     }
 
     @Test
@@ -86,7 +88,7 @@ class AuthServiceImplTest {
         // when & then
         assertThatThrownBy(() -> authService.signup(signupRequestDto))
                 .isInstanceOf(DuplicatedException.class)
-                .hasMessage("Nickname is already in use");
+                .hasMessage(ErrorMessage.USERNAME_DUPLICATED_MESSAGE.get());
     }
 
     @Test
@@ -115,6 +117,6 @@ class AuthServiceImplTest {
         // when & then
         assertThatThrownBy(() -> authService.signin(signinRequestDto))
                 .isInstanceOf(WrongPasswordException.class)
-                .hasMessage("Wrong Password");
+                .hasMessage(ErrorMessage.WRONG_PASSWORD.get());
     }
 }
