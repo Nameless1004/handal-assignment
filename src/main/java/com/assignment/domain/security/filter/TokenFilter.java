@@ -21,19 +21,20 @@ import java.io.IOException;
 public class TokenFilter extends OncePerRequestFilter {
 
     private final TokenUtils tokenUtils;
-
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        log.info(":::Request URI::: [ {}:{} ]", method, uri);
+        log.debug(":::Request URI::: [ {}:{} ]", method, uri);
 
-        String headerToken = request.getHeader("Authorization");
+        String headerToken = request.getHeader(AUTHORIZATION_HEADER);
 
         // 토큰이 없거나 "Bearer "로 시작하지 않는다면 필터 건너뜀
-        if(!Strings.hasText(headerToken) || !headerToken.startsWith("Bearer ")) {
+        if(!Strings.hasText(headerToken) || !headerToken.startsWith(BEARER_PREFIX)) {
 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not found");
             return;
@@ -53,14 +54,18 @@ public class TokenFilter extends OncePerRequestFilter {
         String role = tokenUtils.getRole(token);
         String nickname = tokenUtils.getNickname(token);
 
-        // 인증 객체 생성
         if(Strings.hasText(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            AuthUser authUser = new AuthUser(id, username, nickname, role);
-            JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(authUser);
-            jwtAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(jwtAuthenticationToken);
+            // 인증 객체 생성
+            setAuthentication(id, username, nickname, role, request);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void setAuthentication(String id, String username, String nickname, String role, HttpServletRequest request) {
+        AuthUser authUser = new AuthUser(id, username, nickname, role);
+        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(authUser);
+        jwtAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(jwtAuthenticationToken);
     }
 }

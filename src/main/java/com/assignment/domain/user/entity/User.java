@@ -1,14 +1,18 @@
 package com.assignment.domain.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.assignment.domain.user.enums.UserRole;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(
+        indexes = {
+                @Index(name = "IDX_USERS_USERNAME", columnList = "username", unique = true),
+                @Index(name = "IDX_USERS_NICKNAME", columnList = "nickname", unique = true)
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class User {
@@ -16,12 +20,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String username;
-    private String password;
-    private String nickname;
-    private String role;
 
-    public User(String username, String password, String nickname, String role) {
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false, unique = true)
+    private String nickname;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    public User(String username, String password, String nickname, UserRole role) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;

@@ -1,5 +1,6 @@
 package com.assignment.domain.auth.service;
 
+import com.assignment.common.enums.ErrorMessage;
 import com.assignment.domain.security.TokenUtils;
 import com.assignment.domain.auth.dto.AuthRequestDto;
 import com.assignment.domain.auth.dto.AuthResponseDto;
@@ -7,6 +8,7 @@ import com.assignment.domain.user.entity.User;
 import com.assignment.domain.security.enums.TokenType;
 import com.assignment.common.exceptions.DuplicatedException;
 import com.assignment.common.exceptions.WrongPasswordException;
+import com.assignment.domain.user.enums.UserRole;
 import com.assignment.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,20 +31,21 @@ public class AuthServiceImpl implements AuthService {
         String password = request.password();
 
         if(userRepository.existsByUsername(username)) {
-            throw new DuplicatedException("Username is already in use");
+            throw new DuplicatedException(ErrorMessage.USERNAME_DUPLICATED_MESSAGE.get());
         }
 
         if(userRepository.existsByNickname(nickname)) {
-            throw new DuplicatedException("Nickname is already in use");
+            throw new DuplicatedException(ErrorMessage.NICKNAME_DUPLICATED_MESSAGE.get());
         }
 
         String encodedPassword = passwordEncoder.encode(password);
-        User user = new User(username, encodedPassword, nickname, "ROLE_USER");
+        User user = new User(username, encodedPassword, nickname, UserRole.ROLE_USER);
         user = userRepository.save(user);
         return new AuthResponseDto.Signup(user);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public AuthResponseDto.Signin signin(AuthRequestDto.Signin request) {
         User find = userRepository.findByUsernameOrElseThrow(request.username());
 

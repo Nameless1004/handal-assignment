@@ -1,5 +1,6 @@
 package com.assignment.domain.security;
 
+import com.assignment.domain.user.enums.UserRole;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,13 +15,13 @@ public class AuthUser {
     private final String username;
     private final String nickname;
     private final Collection<? extends GrantedAuthority> authorities;
-    private final String role;
+    private final UserRole role;
 
     public AuthUser(String id, String username, String nickname, String role) {
         this.id = Long.parseLong(id);
         this.username = username;
         this.nickname = nickname;
         this.authorities = List.of(new SimpleGrantedAuthority(role));
-        this.role = role;
+        this.role = UserRole.valueOf(role);
     }
 }

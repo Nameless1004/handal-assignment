@@ -1,6 +1,7 @@
 package com.assignment.domain.security;
 
 import com.assignment.domain.security.enums.TokenType;
+import com.assignment.domain.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -43,12 +44,12 @@ public class TokenUtils {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("type", String.class);
     }
 
-    public String generateJwt(String id, String username, String nickname, String role, TokenType tokenType) {
+    public String generateJwt(String id, String username, String nickname, UserRole role, TokenType tokenType) {
         return Jwts.builder()
                 .claim("id", id)
                 .claim("username", username)
                 .claim("nickname", nickname)
-                .claim("role", role)
+                .claim("role", role.name())
                 .claim("type", tokenType.name())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + tokenType.getLifeTimeMs()))
