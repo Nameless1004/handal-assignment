@@ -88,7 +88,7 @@ class AuthServiceImplTest {
         // when & then
         assertThatThrownBy(() -> authService.signup(signupRequestDto))
                 .isInstanceOf(DuplicatedException.class)
-                .hasMessage(ErrorMessage.USERNAME_DUPLICATED_MESSAGE.get());
+                .hasMessage(ErrorMessage.NICKNAME_DUPLICATED_MESSAGE.get());
     }
 
     @Test
